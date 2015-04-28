@@ -2,7 +2,6 @@ package com.plombeer.games;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -15,6 +14,7 @@ public class Card {
 
     Suit suit; // Масть
 
+    boolean shirtUp = true;
 
     int value; // Значение карты(6 - 10, 11 - Валет, 12 - Дама, 13 - Король, 14 - Туз)
 
@@ -52,16 +52,21 @@ public class Card {
         center.set(x, y);
     }
 
-    public void draw(SpriteBatch batch, Sprite sprites[][]){
+    public void draw(SpriteBatch batch, Sprite sprites[][], Sprite shirtSprite){
+
+        Sprite toDraw = shirtSprite;
         int index = 0;
         if(suit.equals(Suit.spades)) index = 1; else
         if(suit.equals(Suit.hearts)) index = 2; else
         if(suit.equals(Suit.diamonds)) index = 3;
+        if(!shirtUp) toDraw = sprites[value - 6][index];
 
-        sprites[value - 6][index].setPosition(center.x - width / 2, center.y - height / 2);
-        sprites[value - 6][index].setSize(width, height);
-        sprites[value - 6][index].rotate(angle);
-        sprites[value - 6][index].draw(batch);
+        toDraw.setPosition(center.x - width / 2, center.y - height / 2);
+        toDraw.setSize(width, height);
+        toDraw.rotate(angle);
+        toDraw.draw(batch);
+        toDraw.rotate(-angle);
+
     }
 
 

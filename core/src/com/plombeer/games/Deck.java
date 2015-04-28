@@ -16,13 +16,20 @@ public class Deck {
                 cards.add(new Card(i, j));
             }
         }
-
+        for (int i = 1; i < cards.size(); i++) {
+            cards.get(i).setPosition(GamePole.SCREEN_WIDTH - 5 * cards.get(i).width / 6, (int) (GamePole.SCREEN_HEIGHT / 2 + i / (float)cards.size() * (cards.get(i).height * 0.2f)));
+            cards.get(i).angle = 10;
+        }
+        cards.get(0).setPosition(GamePole.SCREEN_WIDTH - 5 * cards.get(0).width / 6 - cards.get(0).height / 4, (int) (GamePole.SCREEN_HEIGHT / 2));
+        cards.get(0).angle = -80;
+        cards.get(0).shirtUp = false;
         mix();
-        int a = 0;
     }
 
     public Card getLastCard(){
         Card last = cards.get(cards.size() - 1);
+        last.angle = 0;
+        last.shirtUp = false;
         cards.remove(cards.size() - 1);
         return last;
     }

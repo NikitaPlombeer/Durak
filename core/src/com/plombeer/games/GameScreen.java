@@ -16,7 +16,10 @@ public class GameScreen implements Screen{
     private Sprite background;
     private SpriteBatch batch;
     private Sprite deckSprites[][];
+    private Sprite shirtSprite;
+
     Card card;
+    Table table;
     @Override
     public void show() {
         batch = new SpriteBatch();
@@ -32,9 +35,13 @@ public class GameScreen implements Screen{
                 deckSprites[j][i] = new Sprite(new TextureRegion(deckTexture, j * 73, i * 98, 73, 98));
             }
         }
-        Deck deck = new Deck();
-        card = new Card(Card.Suit.clubs, 11);
+
+        shirtSprite = new Sprite(new Texture("textures/shirt.png"));
+
+        card = new Card(Card.Suit.diamonds, 13);
         card.setPosition(GamePole.SCREEN_WIDTH / 2, GamePole.SCREEN_HEIGHT / 2);
+        card.angle = 30;
+        table = new Table();
     }
 
     @Override
@@ -43,7 +50,8 @@ public class GameScreen implements Screen{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.draw(batch);
-        card.draw(batch, deckSprites);
+        //card.draw(batch, deckSprites, shirtSprite);
+        table.drawTable(batch, deckSprites, shirtSprite);
         batch.end();
     }
 
