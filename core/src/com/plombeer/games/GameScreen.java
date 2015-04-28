@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
@@ -14,12 +15,26 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class GameScreen implements Screen{
     private Sprite background;
     private SpriteBatch batch;
+    private Sprite deckSprites[][];
+    Card card;
     @Override
     public void show() {
         batch = new SpriteBatch();
         background = new Sprite(new Texture("textures/background.png"));
         background.setSize(GamePole.SCREEN_WIDTH, GamePole.SCREEN_HEIGHT);
         background.setPosition(0, 0);
+
+        Texture deckTexture = new Texture("textures/deck.png");
+
+        deckSprites = new Sprite[9][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 9; j++) {
+                deckSprites[j][i] = new Sprite(new TextureRegion(deckTexture, j * 73, i * 98, 73, 98));
+            }
+        }
+        Deck deck = new Deck();
+        card = new Card(Card.Suit.clubs, 11);
+        card.setPosition(GamePole.SCREEN_WIDTH / 2, GamePole.SCREEN_HEIGHT / 2);
     }
 
     @Override
@@ -28,6 +43,7 @@ public class GameScreen implements Screen{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.draw(batch);
+        card.draw(batch, deckSprites);
         batch.end();
     }
 
