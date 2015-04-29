@@ -11,22 +11,40 @@ public class Card {
     enum Suit{
         clubs, spades, hearts, diamonds
     }
+    /*\
+        clubs ~ крести
+        spades ~ пики
+        hearts ~ черви
+        diamonds ~ буби
+     */
 
     Suit suit; // Масть
 
-    boolean shirtUp = true;
+    boolean shirtUp = true; // Рубашкой вверх или вниз
 
     int value; // Значение карты(6 - 10, 11 - Валет, 12 - Дама, 13 - Король, 14 - Туз)
 
 
-    Vector2 center;
-    int angle = 0, height = GamePole.SCREEN_HEIGHT / 5, width = height * 73 / 98; // Координаты центра, угол поворота, размеры карты
+    Vector2 center; // Положение центра карты на экране
+    int height = GamePole.SCREEN_HEIGHT / 6, width = height * 73 / 98; // Координаты центра, размеры карты
+    float angle = 0f; // угол поворота
 
+    //Анимация
+    Vector2 velocity; // Скорость жвижения карты
+    float angleVel = 0f; //Скорость поворота угла
+    float newAngle = 0f, angle0 = 0f; // Новый угол к которому мы стремимся
+    float time = 0f, maxTime; // Время, которое карта летит, и максимальное время
+    boolean isFlying = false; //Летит карта и нет
+    Vector2 start; // Начальное положение карты, от которой мы движемся
+    Vector2 end; // Конечное положение карты к которому мы стремимся
 
     public Card(Suit suit, int value) {
         this.suit = suit;
         this.value = value;
         center = new Vector2();
+        velocity = new Vector2();
+        end = new Vector2();
+        start = new Vector2();
     }
 
     public Card(int suit, int value) {
@@ -46,27 +64,71 @@ public class Card {
         }
         this.value = value;
         center = new Vector2();
+        velocity = new Vector2();
+        end = new Vector2();
+        start = new Vector2();
     }
 
-    public void setPosition(int x, int y){
+    public void setPosition(float x, float y){
         center.set(x, y);
     }
 
+    // Двигаем карту в зависимости от времени между кардами
+    public void move(float t){
+        time += t;
+
+        angle = angle0 + angleVel * time;
+        center.x = start.x + velocity.x * time;
+        center.y = start.y + velocity.y * time;
+
+        if(time > maxTime){
+            isFlying = false;
+            time = 0f;
+            angle = newAngle;
+            center.set(end);
+        }
+    }
+
+    //Рисуем карту на SpriteBatch
     public void draw(SpriteBatch batch, Sprite sprites[][], Sprite shirtSprite){
 
-        Sprite toDraw = shirtSprite;
-        int index = 0;
-        if(suit.equals(Suit.spades)) index = 1; else
-        if(suit.equals(Suit.hearts)) index = 2; else
-        if(suit.equals(Suit.diamonds)) index = 3;
-        if(!shirtUp) toDraw = sprites[value - 6][index];
+
+        Sprite toDraw = shirtSprite; // Изначально предполагаем, что карта рубашкой вверх
+
+        //Если рубашкой вниз, то рисуем карту
+        if(!shirtUp){
+            int index = 0;
+            if(suit.equals(Suit.spades)) index = 1; else
+            if(suit.equals(Suit.hearts)) index = 2; else
+            if(suit.equals(Suit.diamonds)) index = 3;
+            toDraw = sprites[value - 6][index];
+        }
 
         toDraw.setPosition(center.x - width / 2, center.y - height / 2);
         toDraw.setSize(width, height);
-        toDraw.rotate(angle);
+        toDraw.rotate(angle); // Поворачиваем спрайт на заданный угол
         toDraw.draw(batch);
-        toDraw.rotate(-angle);
+        toDraw.rotate(-angle); // Поворачиваем спрайт обратно, во избежание ошибок
 
+    }
+
+    //Задание скорости, чтобы карта попала в координату (xEnd, yEnd) за время time
+    public void setVelocity(float xEnd,float yEnd, float time){
+        velocity.x = (xEnd - center.x) / (time);
+        velocity.y = (yEnd - center.y) / (time);
+        end.x = xEnd;
+        end.y = yEnd;
+    }
+
+    //Кидаем карту в координаты (x, y), даем ему на это время time и новый угол будет newAngle
+    public void throwTo(float x, float y, float time, float newAngle){
+        isFlying = true;
+        setVelocity(x, y, time);
+        maxTime = time;
+        angle0 = angle;
+        this.newAngle = newAngle;
+        angleVel = (newAngle - angle) / (time);
+        start.set(center);
     }
 
 

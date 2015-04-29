@@ -8,8 +8,9 @@ import java.util.Random;
  */
 public class Deck {
     ArrayList<Card> cards;
-
-    public Deck() {
+    Table table;
+    public Deck(Table table) {
+        this.table = table;
         cards = new ArrayList<Card>();
         for (int i = 0; i < 4; i++) {
             for (int j = 6; j <= 14; j++) {
@@ -28,7 +29,7 @@ public class Deck {
 
     public Card getLastCard(){
         Card last = cards.get(cards.size() - 1);
-        last.angle = 0;
+        //last.angle = 0;
         last.shirtUp = false;
         cards.remove(cards.size() - 1);
         return last;
@@ -49,5 +50,38 @@ public class Deck {
             cards.get(second).suit =  tmpSuit;
             cards.get(second).value = tmpValue;
         }
+    }
+
+
+    public void giveCard(Player player, boolean up){
+        player.cards.add(getLastCard());
+        table.link(player, up, Table.Type.card);
+
+//        float x1[] = new float[player.cards.size()];
+//        float x2[] = new float[player.cards.size()];
+//        float y1[] = new float[player.cards.size()];
+//        float y2[] = new float[player.cards.size()];
+//        float angle1[] = new float[player.cards.size()];
+//        float angle2[] = new float[player.cards.size()];
+//
+//        for (int i = 0; i < player.cards.size(); i++) {
+//            x2[i] = player.cards.get(i).center.x;
+//            y2[i] = player.cards.get(i).center.y;
+//            angle2[i] = player.cards.get(i).angle;
+//        }
+//
+//        player.setCardCoordinate(up);
+//        for (int i = 0; i < player.cards.size(); i++) {
+//            x1[i] = player.cards.get(i).center.x;
+//            y1[i] = player.cards.get(i).center.y;
+//            angle1[i] = player.cards.get(i).angle;
+//        }
+//
+//        for (int i = 0; i < player.cards.size(); i++) {
+//            player.cards.get(i).setPosition(x2[i], y2[i]);
+//            player.cards.get(i).angle = angle1[i];
+//            player.cards.get(i).throwTo(x1[i], y1[i], 1, 0);
+//        }
+
     }
 }

@@ -42,6 +42,7 @@ public class GameScreen implements Screen{
         card.setPosition(GamePole.SCREEN_WIDTH / 2, GamePole.SCREEN_HEIGHT / 2);
         card.angle = 30;
         table = new Table();
+        Gdx.input.setInputProcessor(new InputListener(table));
     }
 
     @Override
@@ -50,9 +51,11 @@ public class GameScreen implements Screen{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.draw(batch);
-        //card.draw(batch, deckSprites, shirtSprite);
         table.drawTable(batch, deckSprites, shirtSprite);
         batch.end();
+
+
+        table.moveCards(delta);
     }
 
     @Override
