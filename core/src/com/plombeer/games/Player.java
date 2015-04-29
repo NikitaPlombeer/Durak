@@ -28,6 +28,7 @@ public class Player {
             int y;
             if(up) y = GamePole.SCREEN_HEIGHT - cards.get(0).height / 2; else
             y = cards.get(0).height / 2;
+            cards.get(i).angle = 0;
             cards.get(i).setPosition((int)x, y);
         }
     }

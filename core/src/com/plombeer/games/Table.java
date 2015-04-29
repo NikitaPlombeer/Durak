@@ -15,6 +15,7 @@ public class Table {
 
     ArrayList<Card> defender; // Защищающийся
     ArrayList<Card> attack; // Атакующий игрок
+    int defenderPlayerIndex, attackPlayerIndex;
 
     Table(){
         deck = new Deck(this);
@@ -39,11 +40,6 @@ public class Table {
         defender = new ArrayList<Card>();
         attack = new ArrayList<Card>();
 
-
-        //throwDefenderOnTable();
-//        link(player[0], true, Type.def);
-//        link(player[0], true, Type.card);
-
     }
 
     public void drawTable(SpriteBatch batch, Sprite sprites[][], Sprite shirtSprite){
@@ -55,13 +51,15 @@ public class Table {
             deck.cards.get(i).draw(batch, sprites, shirtSprite);
         }
 
+        for (int i = 0; i < attack.size(); i++) {
+            attack.get(i).draw(batch, sprites, shirtSprite);
+        }
+
         for (int i = 0; i < defender.size(); i++) {
             defender.get(i).draw(batch, sprites, shirtSprite);
         }
 
-        for (int i = 0; i < attack.size(); i++) {
-            attack.get(i).draw(batch, sprites, shirtSprite);
-        }
+
 
     }
 
@@ -74,20 +72,39 @@ public class Table {
             }
         }
 
+        for (int i = 0; i < attack.size(); i++) {
+            if(attack.get(i).isFlying) {
+                attack.get(i).move(delta);
+            }
+        }
+
         for (int i = 0; i < defender.size(); i++) {
             if(defender.get(i).isFlying) {
                 defender.get(i).move(delta);
             }
         }
+
+
     }
 
     enum Type{
-        def, card
+        def, card, attack, def_attack
     }
 
     public void link(Player player, boolean up, Type type){
         ArrayList<Card> cards = player.cards;
-        if(type.equals(Type.def)) cards = defender;
+        if(type.equals(Type.def)) cards = defender;else
+        if(type.equals(Type.attack)) cards = attack; else
+        if(type.equals(Type.def_attack)){
+            cards = new ArrayList<Card>();
+            for (int i = 0; i < defender.size(); i++) {
+                cards.add(defender.get(i));
+            }
+            for (int i = 0; i < attack.size(); i++) {
+                cards.add(attack.get(i));
+            }
+        }
+
 
         float x1[] = new float[cards.size()];
         float x2[] = new float[cards.size()];
@@ -104,8 +121,7 @@ public class Table {
 
         if(type.equals(Type.card))
             player.setCardCoordinate(up); else
-        if(type.equals(Type.def))
-            setDefenderCoordinate();
+        setTableCardsCoordinate();
         for (int i = 0; i < cards.size(); i++) {
             x1[i] = cards.get(i).center.x;
             y1[i] = cards.get(i).center.y;
@@ -114,24 +130,45 @@ public class Table {
 
         for (int i = 0; i < cards.size(); i++) {
             cards.get(i).setPosition(x2[i], y2[i]);
-            cards.get(i).angle = angle1[i];
-            cards.get(i).throwTo(x1[i], y1[i], 1, 0);
+            cards.get(i).angle = angle2[i];
+            cards.get(i).throwTo(x1[i], y1[i], 1, angle1[i]);
         }
     }
 
 
-    public void setDefenderCoordinate(){
-        if(defender.size() == 1){
-            defender.get(0).setPosition(GamePole.SCREEN_WIDTH / 2, GamePole.SCREEN_HEIGHT / 2);
-            defender.get(0).angle = 15;
+    public void setTableCardsCoordinate(){
+        if(attack.size() == 1){
+            attack.get(0).setPosition(GamePole.SCREEN_WIDTH / 2, GamePole.SCREEN_HEIGHT / 2);
+            attack.get(0).angle = 40;
+
+            for (int i = 0; i < defender.size(); i++) {
+                defender.get(i).center.set(attack.get(i).center);
+            }
         } else
-        if (defender.size() == 2){
-            defender.get(0).setPosition(GamePole.SCREEN_WIDTH / 4, GamePole.SCREEN_HEIGHT / 2);
-            defender.get(0).angle = 15;
-            defender.get(1).setPosition(3*GamePole.SCREEN_WIDTH / 4, GamePole.SCREEN_HEIGHT / 2);
-            defender.get(1).angle = 15;
+        if (attack.size() == 2){
+            attack.get(0).setPosition(3 * GamePole.SCREEN_WIDTH / 8, GamePole.SCREEN_HEIGHT / 2);
+            attack.get(0).angle = 40;
+            attack.get(1).setPosition(5 * GamePole.SCREEN_WIDTH / 8, GamePole.SCREEN_HEIGHT / 2);
+            attack.get(1).angle = 40;
+
+            for (int i = 0; i < defender.size(); i++) {
+                defender.get(i).center.set(attack.get(i).center);
+            }
+        }  else
+        if (attack.size() == 3){
+            attack.get(0).setPosition(GamePole.SCREEN_WIDTH / 4, GamePole.SCREEN_HEIGHT / 2);
+            attack.get(0).angle = 40;
+            attack.get(1).setPosition(GamePole.SCREEN_WIDTH / 2, GamePole.SCREEN_HEIGHT / 2);
+            attack.get(1).angle = 40;
+            attack.get(2).setPosition(3 * GamePole.SCREEN_WIDTH / 4, GamePole.SCREEN_HEIGHT / 2);
+            attack.get(2).angle = 40;
+
+            for (int i = 0; i < defender.size(); i++) {
+                defender.get(i).center.set(attack.get(i).center);
+            }
         }
     }
+
 
     public void onTouchCard(int x, int y){
 
@@ -142,9 +179,12 @@ public class Table {
                    player[i].cards.get(j).center.y - player[i].cards.get(j).height / 2 < y &&
                    player[i].cards.get(j).center.y + player[i].cards.get(j).height / 2 > y){
 
-                    defender.add(player[i].cards.get(j));
+                    if(i == 0)
+                        defender.add(player[i].cards.get(j)); else
+                        attack.add(player[i].cards.get(j));
                     player[i].cards.remove(j);
-                    link(player[i], i == 0, Type.def);
+                    link(player[i], i == 0, Type.def_attack);
+
                     link(player[i], i == 0, Type.card);
 
                     break;

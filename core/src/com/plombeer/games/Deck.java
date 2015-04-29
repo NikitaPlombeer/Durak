@@ -57,31 +57,5 @@ public class Deck {
         player.cards.add(getLastCard());
         table.link(player, up, Table.Type.card);
 
-//        float x1[] = new float[player.cards.size()];
-//        float x2[] = new float[player.cards.size()];
-//        float y1[] = new float[player.cards.size()];
-//        float y2[] = new float[player.cards.size()];
-//        float angle1[] = new float[player.cards.size()];
-//        float angle2[] = new float[player.cards.size()];
-//
-//        for (int i = 0; i < player.cards.size(); i++) {
-//            x2[i] = player.cards.get(i).center.x;
-//            y2[i] = player.cards.get(i).center.y;
-//            angle2[i] = player.cards.get(i).angle;
-//        }
-//
-//        player.setCardCoordinate(up);
-//        for (int i = 0; i < player.cards.size(); i++) {
-//            x1[i] = player.cards.get(i).center.x;
-//            y1[i] = player.cards.get(i).center.y;
-//            angle1[i] = player.cards.get(i).angle;
-//        }
-//
-//        for (int i = 0; i < player.cards.size(); i++) {
-//            player.cards.get(i).setPosition(x2[i], y2[i]);
-//            player.cards.get(i).angle = angle1[i];
-//            player.cards.get(i).throwTo(x1[i], y1[i], 1, 0);
-//        }
-
     }
 }
