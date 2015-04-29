@@ -178,18 +178,42 @@ public class Table {
                    player[i].cards.get(j).center.x + player[i].cards.get(j).width / 2 > x &&
                    player[i].cards.get(j).center.y - player[i].cards.get(j).height / 2 < y &&
                    player[i].cards.get(j).center.y + player[i].cards.get(j).height / 2 > y){
+                    if((i == 0 && canPutCardOnTable(Type.def,player[i].cards.get(j) ))||(i == 1 && canPutCardOnTable(Type.attack,player[i].cards.get(j)))) {
+                        if (i == 0)
+                            defender.add(player[i].cards.get(j));
+                        else
+                            attack.add(player[i].cards.get(j));
+                        player[i].cards.remove(j);
+                        link(player[i], i == 0, Type.def_attack);
 
-                    if(i == 0)
-                        defender.add(player[i].cards.get(j)); else
-                        attack.add(player[i].cards.get(j));
-                    player[i].cards.remove(j);
-                    link(player[i], i == 0, Type.def_attack);
+                        link(player[i], i == 0, Type.card);
 
-                    link(player[i], i == 0, Type.card);
-
+                    }
                     break;
                 }
             }
         }
+    }
+
+    boolean canPutCardOnTable(Type type, Card card){
+        if(type.equals(Type.def)) {
+            if ((attack.get(attack.size() - 1).value < card.value)) {
+                if (attack.get(attack.size() - 1).suit.equals(card.suit)) return true; //Если масти совпадают
+                if (card.suit.equals(trump)) return true; // Если козырная карта
+            } else {
+                return (!attack.get(attack.size() - 1).suit.equals(trump) && card.equals(trump));
+            }
+        }else
+        if(type.equals(Type.attack)){
+            if(attack.size() == 0) return true;
+            for (int i = 0; i < attack.size(); i++) {
+                if(attack.get(i).value == card.value) return true;
+            }
+
+            for (int i = 0; i < defender.size(); i++) {
+                if(defender.get(i).value == card.value) return true;
+            }
+        }
+        return false;
     }
 }
