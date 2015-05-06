@@ -13,6 +13,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  * Created by hh on 28.04.2015.
  */
 public class GameScreen implements Screen{
+
+    MyGdxGame game;
+
     private Sprite background;
     private SpriteBatch batch;
     private Sprite deckSprites[][];
@@ -20,6 +23,11 @@ public class GameScreen implements Screen{
 
     Card card;
     Table table;
+
+
+    public GameScreen(MyGdxGame game) {
+        this.game = game;
+    }
     @Override
     public void show() {
         batch = new SpriteBatch();
@@ -53,9 +61,10 @@ public class GameScreen implements Screen{
         background.draw(batch);
         table.drawTable(batch, deckSprites, shirtSprite);
         batch.end();
-
-
         table.moveCards(delta);
+//        for (int i = 0; i < table.player.length; i++) {
+//            table.player[i].sort();
+//        }
     }
 
     @Override

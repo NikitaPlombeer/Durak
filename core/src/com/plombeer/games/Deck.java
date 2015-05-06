@@ -1,6 +1,7 @@
 package com.plombeer.games;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -18,10 +19,10 @@ public class Deck {
             }
         }
         for (int i = 1; i < cards.size(); i++) {
-            cards.get(i).setPosition(GamePole.SCREEN_WIDTH - 5 * cards.get(i).width / 6, (int) (GamePole.SCREEN_HEIGHT / 2 + i / (float)cards.size() * (cards.get(i).height * 0.2f)));
+            cards.get(i).setPosition(GamePole.SCREEN_WIDTH - 5 * Card.WIDTH / 6, (int) (GamePole.SCREEN_HEIGHT / 2 + i / (float)cards.size() * (Card.HEIGHT * 0.2f)));
             cards.get(i).angle = 10;
         }
-        cards.get(0).setPosition(GamePole.SCREEN_WIDTH - 5 * cards.get(0).width / 6 - cards.get(0).height / 4, (int) (GamePole.SCREEN_HEIGHT / 2));
+        cards.get(0).setPosition(GamePole.SCREEN_WIDTH - 5 * Card.WIDTH / 6 - Card.HEIGHT  / 4, (int) (GamePole.SCREEN_HEIGHT / 2));
         cards.get(0).angle = -80;
         cards.get(0).shirtUp = false;
         mix();
@@ -53,9 +54,27 @@ public class Deck {
     }
 
 
-    public void giveCard(Player player, boolean up){
-        player.cards.add(getLastCard());
-        table.link(player, up, Table.Type.card);
+
+    enum Status{
+        close, open
+    }
+    public void giveCard(Player player, Status status){
+        Card newCard = getLastCard();
+
+        player.cards.add(newCard);
+        newCard.shirtUp = status.equals(Status.close);
+        table.bubbleSort(player.cards, 0, player.cards.size(), 1);
+        int index = 0;
+        for (int i = 0; i < player.cards.size() - 1; i++) {
+            if(!player.cards.get(i).suit.equals(player.cards.get(i + 1).suit)){
+                table.bubbleSort(player.cards, index, i + 1, 0);
+                index = i + 1;
+            }
+        }
+        table.bubbleSort(player.cards, index, player.cards.size(), 0);
+
+        player.sorted = false;
+        table.link(player, Table.Type.card);
 
     }
 }

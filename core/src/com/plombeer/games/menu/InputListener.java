@@ -1,16 +1,17 @@
-package com.plombeer.games;
+package com.plombeer.games.menu;
 
 import com.badlogic.gdx.InputProcessor;
+import com.plombeer.games.GamePole;
 
 /**
- * Created by hh on 29.04.2015.
+ * Created by hh on 30.04.2015.
  */
 public class InputListener implements InputProcessor{
 
-    Table table;
+    MenuScreen screen;
 
-    public InputListener(Table table) {
-        this.table = table;
+    public InputListener(MenuScreen screen) {
+        this.screen = screen;
     }
 
     @Override
@@ -30,15 +31,13 @@ public class InputListener implements InputProcessor{
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        screen.newGameButton.touch(screenX, GamePole.SCREEN_HEIGHT - screenY);
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        table.onTouchCard(screenX, GamePole.SCREEN_HEIGHT - screenY);
-        String text;
 
-        table.button.touch(screenX, GamePole.SCREEN_HEIGHT - screenY);
         return true;
     }
 

@@ -8,6 +8,10 @@ import com.badlogic.gdx.math.Vector2;
  * Created by hh on 28.04.2015.
  */
 public class Card {
+
+    public static float HEIGHT = GamePole.SCREEN_HEIGHT / 5;
+    public static float WIDTH = HEIGHT * 73 / 98;
+
     enum Suit{
         clubs, spades, hearts, diamonds
     }
@@ -26,7 +30,6 @@ public class Card {
 
 
     Vector2 center; // Положение центра карты на экране
-    int height = GamePole.SCREEN_HEIGHT / 6, width = height * 73 / 98; // Координаты центра, размеры карты
     float angle = 0f; // угол поворота
 
     //Анимация
@@ -104,8 +107,8 @@ public class Card {
             toDraw = sprites[value - 6][index];
         }
 
-        toDraw.setPosition(center.x - width / 2, center.y - height / 2);
-        toDraw.setSize(width, height);
+        toDraw.setPosition(center.x - WIDTH / 2, center.y - HEIGHT / 2);
+        toDraw.setSize(WIDTH, HEIGHT);
         toDraw.rotate(angle); // Поворачиваем спрайт на заданный угол
         toDraw.draw(batch);
         toDraw.rotate(-angle); // Поворачиваем спрайт обратно, во избежание ошибок
@@ -130,6 +133,12 @@ public class Card {
         angleVel = (newAngle - angle) / (time);
         start.set(center);
     }
+
+    public boolean isTouched(float x, float y, float width){
+        return (center.x - WIDTH / 2 < x && center.x - WIDTH / 2 + width> x &&
+                center.y - HEIGHT / 2 < y && center.y + HEIGHT / 2 > y);
+    }
+
 
 
 }
